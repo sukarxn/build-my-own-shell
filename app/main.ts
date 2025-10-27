@@ -6,7 +6,11 @@ const rl = createInterface({
 });
 
 // TODO: Uncomment the code below to pass the first stage
-rl.question("$ ", (answer) => {
+const myrl = () => {
+  rl.question("$ ", (answer) => {
   rl.write(answer + ": command not found\n");
-  rl.close();
+  myrl();
 });
+}
+
+myrl();
