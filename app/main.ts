@@ -6,11 +6,15 @@ const rl = createInterface({
 });
 
 // TODO: Uncomment the code below to pass the first stage
-const myrl = () => {
+const myShell = () => {
   rl.question("$ ", (answer) => {
+    if (answer === "exit") {
+      rl.close();
+      return;
+    }
   rl.write(answer + ": command not found\n");
-  myrl();
-});
+  myShell();
+  });
 }
 
-myrl();
+myShell();
