@@ -81,5 +81,3 @@ const myShell = () => {
 }
 
 myShell();
-
-tesst
