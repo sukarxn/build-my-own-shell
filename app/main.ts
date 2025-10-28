@@ -7,6 +7,7 @@ const rl = createInterface({
 
 const handleCommand  = (input: string):boolean => {
   const [command, ...args] = input.trim().split(" ");
+
   if (command === "exit") {
     if(args.length > 1) {
       rl.write('exit: too many arguments\n');
@@ -19,6 +20,17 @@ const handleCommand  = (input: string):boolean => {
 
   if(command === "echo") {
     rl.write(args.join(" ") + "\n");
+    return true;
+  }
+
+  if(command === "type") {
+    if(args.length > 1) {
+      rl.write('exit: too many arguments\n');
+      return true;
+    }
+    ["type", "echo", "exit"].includes(args[0]) ?
+    rl.write(`${args[0]} is a shell builtin\n`): 
+    rl.write(`${args[0]}: not found\n`);
     return true;
   }
 
@@ -35,4 +47,4 @@ const myShell = () => {
   });
 }
 
-
+myShell();
