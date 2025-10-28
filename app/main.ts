@@ -5,24 +5,32 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-const handleCommand  = (input: string) => {
+const handleCommand  = (input: string):boolean => {
   const [command, ...args] = input.trim().split(" ");
   if (command === "exit") {
     if(args.length > 1) {
       rl.write('exit: too many arguments\n');
-      return;
+      return true;
     }
     const exitCode = parseInt(args[0] || "0", 10);
     rl.close();
     process.exit(exitCode);
   }
+
+  if(command === "echo") {
+    rl.write(args.join(" ") + "\n");
+    return true;
+  }
+
+  // if command is not recognized in any of the above cases
+  rl.write(command + ": command not found\n");
+  return false; 
 }
 
 // TODO: Uncomment the code below to pass the first stage
 const myShell = () => {
   rl.question("$ ", (answer) => {
     handleCommand(answer);
-    rl.write(answer + ": command not found\n");
     myShell();
   });
 }
