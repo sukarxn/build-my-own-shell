@@ -1,12 +1,36 @@
 import { createInterface } from "readline";
+import { existsSync, statSync } from "fs";
+
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const handleCommand  = (input: string):boolean => {
+const handleCommand  = (input: string) => {
   const [command, ...args] = input.trim().split(" ");
+
+  const checkPath = (command: string) => {
+    // go to every directory in PATH
+    const pathsDirs = process.env.PATH?.split(":");
+    if (pathsDirs) {
+      for(const dir of pathsDirs) {
+        // check if command exists in dir
+        const filepath = `${dir}/${command}`;
+        if(existsSync(filepath)){
+          try {
+            const stats = statSync(filepath);
+            if(stats.isFile() && (stats.mode & 0o111)) {
+              return filepath;
+            }
+          } catch (err) {
+            // skip if err or not executable
+          }
+        }
+      }
+    }
+    return null;
+  }
 
   if (command === "exit") {
     if(args.length > 1) {
@@ -25,19 +49,37 @@ const handleCommand  = (input: string):boolean => {
 
   if(command === "type") {
     if(args.length > 1) {
-      rl.write('exit: too many arguments\n');
+      rl.write('type: too many arguments\n');
       return true;
     }
-    ["type", "echo", "exit"].includes(args[0]) ?
-    rl.write(`${args[0]} is a shell builtin\n`): 
-    rl.write(`${args[0]}: not found\n`);
-    return true;
+
+    // if(["type", "echo", "exit"].includes(args[0])) {
+    //   rl.write(`${args[0]} is a shell builtin\n`);
+    //   return true;
+    // } else if (checkPath(command)) {
+    // //   rl.write(`${command}: ${checkPath(command)}`)
+    // } else {
+    //   rl.write(`${args[0]}: not found\n`);
+    // }
+
+    if(["type", "echo", "exit"].includes(args[0])) {
+      rl.write(`${args[0]} is a shell builtin\n`);
+      return true;
+
+    } else if (checkPath(args[0])) {
+      rl.write(`${args[0]}: ${checkPath(args[0])}\n`);
+      return true;
+
+    } else {
+      rl.write(`${args[0]}: not found\n`);
+      return false;
+    }
   }
 
   // if command is not recognized in any of the above cases
   rl.write(command + ": command not found\n");
   return false; 
-}
+  }
 
 // TODO: Uncomment the code below to pass the first stage
 const myShell = () => {
