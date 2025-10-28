@@ -5,23 +5,21 @@ const rl = createInterface({
   output: process.stdout,
 });
 
+const handleCommand  = (input: string) => {
+  const [command, ...args] = input.trim().split(" ");
+  if (command === "exit") {
+    const exitCode = parseInt(args[0] || "0", 10);
+    rl.close();
+    process.exit(exitCode);
+  }
+}
+
 // TODO: Uncomment the code below to pass the first stage
 const myShell = () => {
   rl.question("$ ", (answer) => {
-    const parts = answer.trim().split(" ");
-    const command = parts[0];
-    const args = parts.slice(1);
-
-    if (command === "exit") {
-      const exitCode = args[0] ? parseInt(args[0]) : 0;
-      exitCode == 0 ? rl.write(`Exited with success: ${exitCode}\n`) : rl.write(`Exited with error code: ${exitCode}\n`);
-      rl.close();
-      return;
-    }
-
-  rl.write(answer + ": command not found\n");
-  myShell();
-
+    handleCommand(answer);
+    rl.write(answer + ": command not found\n");
+    myShell();
   });
 }
 
