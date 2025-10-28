@@ -53,15 +53,6 @@ const handleCommand  = (input: string) => {
       return;
     }
 
-    // if(["type", "echo", "exit"].includes(args[0])) {
-    //   rl.write(`${args[0]} is a shell builtin\n`);
-    //   return true;
-    // } else if (checkPath(command)) {
-    // //   rl.write(`${command}: ${checkPath(command)}`)
-    // } else {
-    //   rl.write(`${args[0]}: not found\n`);
-    // }
-
     if(["type", "echo", "exit"].includes(args[0])) {
       rl.write(`${args[0]} is a shell builtin\n`);
       return;
@@ -90,3 +81,5 @@ const myShell = () => {
 }
 
 myShell();
+
+tesst
