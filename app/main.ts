@@ -67,7 +67,7 @@ const handleCommand  = (input: string) => {
       return true;
 
     } else if (checkPath(args[0])) {
-      rl.write(`${args[0]}: ${checkPath(args[0])}\n`);
+      rl.write(`${args[0]} is ${checkPath(args[0])}\n`);
       return true;
 
     } else {
