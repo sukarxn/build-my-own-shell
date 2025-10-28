@@ -8,6 +8,10 @@ const rl = createInterface({
 const handleCommand  = (input: string) => {
   const [command, ...args] = input.trim().split(" ");
   if (command === "exit") {
+    if(args.length > 1) {
+      rl.write('exit: too many arguments\n');
+      return;
+    }
     const exitCode = parseInt(args[0] || "0", 10);
     rl.close();
     process.exit(exitCode);
