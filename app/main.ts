@@ -45,26 +45,17 @@ const handleCommand  = (input: string) => {
 
   else if(command === "echo") {
     rl.write(args.join(" ") + "\n");
-    return;
   }
 
   else if(command === "type") {
     if(args.length > 1) {
       rl.write('type: too many arguments\n');
-      return;
-    }
-
-    if(["type", "echo", "exit"].includes(args[0])) {
+    } else if(["type", "echo", "exit"].includes(args[0])) {
       rl.write(`${args[0]} is a shell builtin\n`);
-      return;
-
     } else if (checkPath(args[0])) {
       rl.write(`${args[0]} is ${checkPath(args[0])}\n`);
-      return;
-
     } else {
       rl.write(`${args[0]}: not found\n`);
-      return;
     }
   }
 
@@ -72,28 +63,29 @@ const handleCommand  = (input: string) => {
     // when the command is none of the above: check for an executable command
     const commPath: any = checkPath(command);
     // execute the program using args[]
-    execFile(commPath, args, (error, stdout, stderr) => {
-    if (error) {
-      rl.write(`Error executing file: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      rl.write(`Executable stderr: ${stderr}`);
-    }
-    rl.write(`Executable stdout: ${stdout}`);
+    execFile(command, args, (error, stdout, stderr) => {
+      if (error) {
+        rl.write(`Error executing file: ${error.message}`);
+      } else if (stderr) {
+        rl.write(`${stderr}`);
+      } else {
+        rl.write(`${stdout}`);
+      }
+      myShell();
     });
+    return;
+
+  } else {
+    rl.write(command + ": command not found\n");
   }
 
-  // if command is not recognized in any of the above cases
-  rl.write(command + ": command not found\n");
-  return; 
+  myShell();
   }
 
 // TODO: Uncomment the code below to pass the first stage
 const myShell = () => {
   rl.question("$ ", (answer) => {
     handleCommand(answer);
-    myShell();
   });
 }
 
