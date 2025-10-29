@@ -1,5 +1,6 @@
 import { createInterface } from "readline";
 import { existsSync, statSync } from "fs";
+import { execFile } from "child_process";
 
 
 const rl = createInterface({
@@ -11,7 +12,7 @@ const handleCommand  = (input: string) => {
   const [command, ...args] = input.trim().split(" ");
 
   const checkPath = (command: string) => {
-    // go to every directory in PATH
+    // returns : filepath if exists or null 
     const pathsDirs = process.env.PATH?.split(":");
     if (pathsDirs) {
       for(const dir of pathsDirs) {
@@ -42,12 +43,12 @@ const handleCommand  = (input: string) => {
     process.exit(exitCode);
   }
 
-  if(command === "echo") {
+  else if(command === "echo") {
     rl.write(args.join(" ") + "\n");
     return;
   }
 
-  if(command === "type") {
+  else if(command === "type") {
     if(args.length > 1) {
       rl.write('type: too many arguments\n');
       return;
@@ -65,6 +66,22 @@ const handleCommand  = (input: string) => {
       rl.write(`${args[0]}: not found\n`);
       return;
     }
+  }
+
+  else if(checkPath(command)){
+    // when the command is none of the above: check for an executable command
+    const commPath: any = checkPath(command);
+    // execute the program using args[]
+    execFile(commPath, args, (error, stdout, stderr) => {
+    if (error) {
+      rl.write(`Error executing file: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      rl.write(`Executable stderr: ${stderr}`);
+    }
+    rl.write(`Executable stdout: ${stdout}`);
+    });
   }
 
   // if command is not recognized in any of the above cases
